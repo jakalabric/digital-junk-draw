@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, Suspense, useRef } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowLeft, Link as LinkIcon, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
 import { addLink, fetchUrlMetadata, getCategories } from '../actions/links'
@@ -20,7 +20,6 @@ function AddLinkForm() {
   const [fetching, setFetching] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
-  const metadataFetchedRef = useRef(false)
 
   // Load categories and check for pre-filled data from share target
   useEffect(() => {
@@ -45,8 +44,7 @@ function AddLinkForm() {
   // Auto-fetch metadata when URL is set from search params
   useEffect(() => {
     const fetchMetadata = async () => {
-      if (url && url.startsWith('http') && !metadataFetchedRef.current) {
-        metadataFetchedRef.current = true
+      if (url && url.startsWith('http')) {
         setFetching(true)
         setError('')
         try {

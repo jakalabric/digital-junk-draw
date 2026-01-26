@@ -30,10 +30,12 @@ function AddLinkForm() {
       // Check for pre-filled data from share target
       const urlParam = searchParams.get('url')
       const titleParam = searchParams.get('title')
+      const textParam = searchParams.get('text')
       const sourceParam = searchParams.get('source')
       
       if (urlParam) setUrl(urlParam)
       if (titleParam) setTitle(titleParam)
+      else if (textParam) setTitle(textParam)
       if (sourceParam) setSource(sourceParam)
     }
     loadData()

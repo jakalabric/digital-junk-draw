@@ -18,6 +18,7 @@ function AddLinkForm() {
   const [fetching, setFetching] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [urlState, setUrlState] = useState('')
 
   // Load categories and check for pre-filled data from share target
   useEffect(() => {
@@ -34,7 +35,7 @@ function AddLinkForm() {
         if (sharedUrl) {
           // Decode the URL parameter before setting the state
           const decodedUrl = decodeURIComponent(sharedUrl)
-          setUrl(decodedUrl)
+          setUrlState(decodedUrl)
           return true
         }
         return false
@@ -53,14 +54,22 @@ function AddLinkForm() {
     loadData()
   }, [])
 
+  // Log URL search parameters to console
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      console.log('URL Search Params:', Object.fromEntries(params.entries()))
+    }
+  }, [])
+
   // Auto-fetch metadata when URL is set from search params
   useEffect(() => {
     const fetchMetadata = async () => {
-      if (url && url.startsWith('http')) {
+      if (urlState && urlState.startsWith('http')) {
         setFetching(true)
         setError('')
         try {
-          const metadata = await fetchUrlMetadata(url)
+          const metadata = await fetchUrlMetadata(urlState)
           if (metadata.title && !title) {
             setTitle(metadata.title)
           }
@@ -74,14 +83,14 @@ function AddLinkForm() {
         }
       }
     }
-    
+     
     fetchMetadata()
-  }, [url])
+  }, [urlState])
 
   const handleUrlChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const newUrl = e.target.value
-    setUrl(newUrl)
-    
+    setUrlState(newUrl)
+     
     // Auto-fetch metadata when URL is pasted
     if (newUrl && newUrl.startsWith('http')) {
       setFetching(true)
@@ -106,16 +115,16 @@ function AddLinkForm() {
     e.preventDefault()
     setError('')
     setLoading(true)
-
+ 
     try {
-      if (!url || !title) {
+      if (!urlState || !title) {
         setError('URL and Title are required')
         setLoading(false)
         return
       }
-
+ 
       const formData = new FormData()
-      formData.append('url', url)
+      formData.append('url', urlState)
       formData.append('title', title)
       formData.append('notes', notes)
       formData.append('source', source)
@@ -148,6 +157,11 @@ function AddLinkForm() {
 
   return (
     <div className="min-h-screen pb-20">
+      {/* Temporary URL Search Params Display */}
+      <div className="bg-gray-100 p-2 text-xs text-gray-700">
+        {typeof window !== 'undefined' ? window.location.search : 'Loading...'}
+      </div>
+      
       {/* Header */}
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200">
         <div className="px-4 py-3 flex items-center gap-3">
@@ -173,8 +187,8 @@ function AddLinkForm() {
               <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
               <input
                 type="text"
-                value={url}
-                onChange={handleUrlChange}
+                value={urlState}
+                onChange={(e) => setUrlState(e.target.value)}
                 placeholder="https://example.com"
                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
               />

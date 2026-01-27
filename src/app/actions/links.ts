@@ -141,14 +141,12 @@ export async function addLink(formData: FormData) {
       throw new Error(JSON.stringify(error))
     }
  
-    return data
+    // Revalidate the home page to refresh the list
+    revalidatePath('/', 'layout')
+    redirect('/')
   } catch (error) {
     return { error: error instanceof Error ? error.message : 'Failed to add link' }
   }
-
-  // Revalidate the home page to refresh the list
-  revalidatePath('/', 'layout')
-  redirect('/')
 }
 
 // Update a link

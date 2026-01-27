@@ -26,16 +26,19 @@ function AddLinkForm() {
       setCategories(cats)
       
       // Check for pre-filled data from share target using URLSearchParams
-      const params = new URLSearchParams(window.location.search)
-      const sharedUrl = params.get('url')
-      const titleParam = params.get('title')
-      const textParam = params.get('text')
-      const sourceParam = params.get('source')
-      
-      if (sharedUrl) setUrl(sharedUrl)
-      if (titleParam) setTitle(titleParam)
-      else if (textParam) setTitle(textParam)
-      if (sourceParam) setSource(sourceParam)
+      // Wrap in setTimeout for Mobile Safari compatibility
+      setTimeout(() => {
+        const params = new URLSearchParams(window.location.search)
+        const sharedUrl = params.get('url')
+        const titleParam = params.get('title')
+        const textParam = params.get('text')
+        const sourceParam = params.get('source')
+        
+        if (sharedUrl) setUrl(sharedUrl)
+        if (titleParam) setTitle(titleParam)
+        else if (textParam) setTitle(textParam)
+        if (sourceParam) setSource(sourceParam)
+      }, 0)
     }
     loadData()
   }, [])

@@ -66,121 +66,115 @@ function AddLinkForm() {
         setLoading(false)
         return
       }
-  
+   
       const formData = new FormData()
       formData.append('url', url)
       formData.append('title', title)
       formData.append('category_id', categoryId)
- 
+  
       const result = await addLink(formData)
-      if (result.error) {
-        setError(result.error)
-      } else {
-        setSuccess(true)
+      if (result.success) {
+        router.push('/')
+        return
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to add link')
-    } finally {
       setLoading(false)
     }
-  }
-
-  if (success) {
-    return (
-      <div className="min-h-screen flex items-center justify-center px-4">
-        <div className="text-center">
-          <CheckCircle className="mx-auto h-16 w-16 text-green-500 mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Link Added!</h2>
-          <p className="text-gray-600">Redirecting to dashboard...</p>
-        </div>
-      </div>
-    )
   }
  
   return (
     <div className="min-h-screen pb-20">
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200">
+      {/* Terminal Header */}
+      <header className="sticky top-0 z-40 bg-black/95 backdrop-blur-sm border-b border-green-500/20">
         <div className="px-4 py-3 flex items-center gap-3">
           <button
             onClick={() => router.back()}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-green-500/10 rounded transition-colors"
           >
-            <ArrowLeft size={20} />
+            <ArrowLeft size={20} className="text-green-500" />
           </button>
-          <h1 className="text-lg font-semibold text-gray-900">Add New Link</h1>
+          <h1 className="text-lg font-semibold text-green-500">ADD NEW LINK</h1>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="px-4 py-6">
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* URL Input */}
+          {/* URL Input - Command Prompt Style */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              URL <span className="text-red-500">*</span>
+            <label className="block text-xs font-medium text-green-400 mb-1">
+              INPUT_URL <span className="text-green-500">*</span>
             </label>
             <div className="relative">
-              <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-green-500 text-sm">$</span>
               <input
                 type="text"
                 value={url}
                 onChange={handleUrlChange}
                 placeholder="https://example.com"
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className="w-full pl-8 pr-4 py-3 bg-black/30 border-b border-green-500/20 focus:border-green-500 outline-none text-green-500 placeholder-green-500/50 transition-colors"
               />
             </div>
           </div>
 
-          {/* Title Input */}
+          {/* Title Input - Command Prompt Style */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Title <span className="text-red-500">*</span>
+            <label className="block text-xs font-medium text-green-400 mb-1">
+              INPUT_TITLE <span className="text-green-500">*</span>
             </label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Enter title..."
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-              autoFocus
-            />
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-green-500 text-sm">$</span>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Enter title..."
+                className="w-full pl-8 pr-4 py-3 bg-black/30 border-b border-green-500/20 focus:border-green-500 outline-none text-green-500 placeholder-green-500/50 transition-colors"
+                autoFocus
+              />
+            </div>
           </div>
 
-          {/* Category Select */}
+          {/* Category Select - Terminal Style */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-            <select
-              id="category-select"
-              value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
-            >
-              <option value="">Select a category</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
-                </option>
+            <label className="block text-xs font-medium text-green-400 mb-1">
+              SELECT_CATEGORY
+            </label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-green-500 text-sm">$</span>
+              <select
+                id="category-select"
+                value={categoryId}
+                onChange={(e) => setCategoryId(e.target.value)}
+                className="w-full pl-8 pr-4 py-3 bg-black/30 border-b border-green-500/20 focus:border-green-500 outline-none text-green-500 appearance-none"
+              >
+                <option value="" className="bg-black text-green-500">SELECT_CATEGORY</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id} className="bg-black text-green-500">
+                    {cat.name}
+                  </option>
               ))}
-            </select>
+              </select>
+            </div>
           </div>
 
-          {/* Error Message */}
+          {/* Error Message - Terminal Style */}
           {error && (
-            <div className="flex items-center gap-2 text-red-600 bg-red-50 px-4 py-3 rounded-lg">
-              <AlertCircle size={18} />
-              <span className="text-sm">{error}</span>
+            <div className="flex items-center gap-2 text-red-400 bg-red-900/20 px-4 py-3 rounded border border-red-500/20">
+              <AlertCircle size={16} className="text-red-400" />
+              <span className="text-xs text-red-400">{error}</span>
             </div>
           )}
 
-          {/* Submit Button */}
+          {/* Submit Button - Terminal Style */}
           <button
             type="submit"
             disabled={loading || !url}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+            className="w-full bg-green-500/10 text-green-500 py-4 rounded border border-green-500/20 hover:bg-green-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 font-medium"
           >
-            {loading && <Loader2 size={18} className="animate-spin" />}
-            {loading ? 'Adding...' : 'Add Link'}
+            {loading && <Loader2 size={18} className="animate-spin text-green-500" />}
+            {loading ? 'EXECUTING...' : 'EXECUTE'}
           </button>
         </form>
       </main>

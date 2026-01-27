@@ -1,7 +1,6 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
 // Get all categories
@@ -107,13 +106,13 @@ export async function addLink(formData: FormData) {
   } catch (e) {
     source = 'Manual'
   }
- 
+  
   // Ensure title has a fallback
   const finalTitle = title || url || 'Untitled'
- 
+  
   // Default category to null if none selected
   let finalCategoryId = categoryId || null
- 
+  
   // Database operation
   let data, error
   try {
@@ -145,8 +144,10 @@ export async function addLink(formData: FormData) {
   }
 
   // Revalidate the home page to refresh the list
-  revalidatePath('/', 'layout')
-  redirect('/')
+  revalidatePath('/')
+  
+  // Return success response instead of redirecting
+  return { success: true }
 }
 
 // Update a link

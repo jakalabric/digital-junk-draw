@@ -111,12 +111,8 @@ export async function addLink(formData: FormData) {
   // Ensure title has a fallback
   const finalTitle = title || url || 'Untitled'
  
-  // Default category to a hard-coded fallback ID if none selected
-  let finalCategoryId = categoryId
-  if (!finalCategoryId) {
-    // Hard-code a fallback category ID that definitely exists in the Supabase 'categories' table
-    finalCategoryId = '1' // Replace with an actual category ID from your database
-  }
+  // Default category to null if none selected
+  let finalCategoryId = categoryId || null
  
   // Database operation
   let data, error

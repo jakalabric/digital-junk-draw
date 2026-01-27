@@ -3,22 +3,18 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowLeft, Link as LinkIcon, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
-import { addLink, fetchUrlMetadata, getCategories } from '../actions/links'
+import { addLink, getCategories } from '../actions/links'
 import { Category } from '@/lib/supabase'
 
 function AddLinkForm() {
   const router = useRouter()
   const [url, setUrl] = useState('')
   const [title, setTitle] = useState('')
-  const [notes, setNotes] = useState('')
-  const [source, setSource] = useState('')
   const [categoryId, setCategoryId] = useState('')
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(false)
-  const [fetching, setFetching] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
-  const [urlState, setUrlState] = useState('')
 
   // Load categories and check for pre-filled data from share target
   useEffect(() => {
@@ -34,7 +30,7 @@ function AddLinkForm() {
         if (sharedUrl) {
           // Decode the URL parameter before setting the state
           const decodedUrl = decodeURIComponent(sharedUrl)
-          setUrlState(decodedUrl)
+          setUrl(decodedUrl)
           // Set URL as temporary title immediately if no title exists
           if (!title) {
             setTitle(decodedUrl)
@@ -44,40 +40,6 @@ function AddLinkForm() {
     }
     loadData()
   }, [])
-
-  // Log URL search parameters to console
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search)
-      console.log('URL Search Params:', Object.fromEntries(params.entries()))
-    }
-  }, [])
-
-  // Auto-fetch metadata when URL is set from search params
-  useEffect(() => {
-    const fetchMetadata = async () => {
-      if (urlState && urlState.startsWith('http')) {
-        setFetching(true)
-        setError('')
-        try {
-          const metadata = await fetchUrlMetadata(urlState)
-          // Only update title if we're currently using URL as temporary title
-          if (metadata.title && title === urlState) {
-            setTitle(metadata.title)
-          }
-          if (metadata.source && !source) {
-            setSource(metadata.source)
-          }
-        } catch (err) {
-          console.error('Error fetching metadata:', err)
-        } finally {
-          setFetching(false)
-        }
-      }
-    }
-    
-    fetchMetadata()
-  }, [urlState])
   
   // Auto-focus on category dropdown when categories are loaded
   useEffect(() => {
@@ -93,50 +55,25 @@ function AddLinkForm() {
     }
   }, [categories])
 
-  const handleUrlChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newUrl = e.target.value
-    setUrlState(newUrl)
-     
-    // Auto-fetch metadata when URL is pasted
-    if (newUrl && newUrl.startsWith('http')) {
-      setFetching(true)
-      setError('')
-      try {
-        const metadata = await fetchUrlMetadata(newUrl)
-        if (metadata.title && !title) {
-          setTitle(metadata.title)
-        }
-        if (metadata.source && !source) {
-          setSource(metadata.source)
-        }
-      } catch (err) {
-        console.error('Error fetching metadata:', err)
-      } finally {
-        setFetching(false)
-      }
-    }
+  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUrl(e.target.value)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setLoading(true)
-  
+   
     try {
-      if (!urlState) {
+      if (!url) {
         setError('URL is required')
         setLoading(false)
         return
       }
   
-      // Use URL as title if no title is set (temporary title)
-      const finalTitle = title || urlState
-  
       const formData = new FormData()
-      formData.append('url', urlState)
-      formData.append('title', finalTitle)
-      formData.append('notes', notes)
-      formData.append('source', source)
+      formData.append('url', url)
+      formData.append('title', title)
       formData.append('category_id', categoryId)
  
       await addLink(formData)
@@ -196,14 +133,11 @@ function AddLinkForm() {
               <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
               <input
                 type="text"
-                value={urlState}
-                onChange={(e) => setUrlState(e.target.value)}
+                value={url}
+                onChange={handleUrlChange}
                 placeholder="https://example.com"
                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
               />
-              {fetching && (
-                <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-500 animate-spin" size={18} />
-              )}
             </div>
           </div>
 
@@ -217,18 +151,6 @@ function AddLinkForm() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Link title"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-            />
-          </div>
-
-          {/* Source Input */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Source</label>
-            <input
-              type="text"
-              value={source}
-              onChange={(e) => setSource(e.target.value)}
-              placeholder="e.g., reddit.com, youtube.com"
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             />
           </div>
@@ -251,18 +173,6 @@ function AddLinkForm() {
             </select>
           </div>
 
-          {/* Notes Textarea */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Notes</label>
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Add any notes about this link..."
-              rows={4}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none"
-            />
-          </div>
-
           {/* Error Message */}
           {error && (
             <div className="flex items-center gap-2 text-red-600 bg-red-50 px-4 py-3 rounded-lg">
@@ -274,7 +184,7 @@ function AddLinkForm() {
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={loading || !urlState}
+            disabled={loading || !url}
             className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
           >
             {loading && <Loader2 size={18} className="animate-spin" />}

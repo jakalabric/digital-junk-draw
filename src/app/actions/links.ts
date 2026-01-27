@@ -2,37 +2,6 @@
 
 import { supabase } from '@/lib/supabase'
 
-// Fetch URL metadata from a webpage
-export async function fetchUrlMetadata(url: string) {
-  try {
-    // Use a CORS proxy or your own backend to fetch the page
-    // For demo purposes, we'll use a simple approach
-    const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`)
-    const data = await response.json()
-    
-    // Parse HTML to extract title
-    const html = data.contents
-    const titleMatch = html.match(/<title>(.*?)<\/title>/i)
-    const title = titleMatch ? titleMatch[1] : url
-    
-    // Extract source from URL
-    const source = new URL(url).hostname.replace('www.', '')
-    
-    return {
-      title,
-      source,
-      success: true
-    }
-  } catch (error) {
-    console.error('Error fetching URL metadata:', error)
-    return {
-      title: url,
-      source: new URL(url).hostname.replace('www.', ''),
-      success: false
-    }
-  }
-}
-
 // Get all categories
 export async function getCategories() {
   const { data, error } = await supabase
@@ -123,19 +92,60 @@ export async function getLink(id: string) {
 export async function addLink(formData: FormData) {
   const url = formData.get('url') as string
   const title = formData.get('title') as string
-  const notes = formData.get('notes') as string
-  const source = formData.get('source') as string
   const categoryId = formData.get('category_id') as string
+
+  // Extract source from URL domain (or use 'Manual' as fallback)
+  let source = 'Manual'
+  try {
+    const urlObj = new URL(url)
+    source = urlObj.hostname.replace('www.', '')
+  } catch (e) {
+    source = 'Manual'
+  }
+
+  // Use URL as title if title is blank
+  const finalTitle = title || url
+
+  // Hard-code image as null
+  const image = null
+
+  // Default category to 'Junk' or first available category if none selected
+  let finalCategoryId = categoryId
+  if (!finalCategoryId) {
+    // Try to find 'Junk' category first
+    const { data: categories, error: catError } = await supabase
+      .from('categories')
+      .select('id')
+      .or('name.eq.Junk,name.eq.junk')
+      .limit(1)
+      .single()
+    
+    if (!catError && categories) {
+      finalCategoryId = categories.id
+    } else {
+      // If 'Junk' category doesn't exist, get the first available category
+      const { data: firstCategory, error: firstCatError } = await supabase
+        .from('categories')
+        .select('id')
+        .limit(1)
+        .single()
+      
+      if (!firstCatError && firstCategory) {
+        finalCategoryId = firstCategory.id
+      }
+    }
+  }
 
   const { data, error } = await supabase
     .from('links')
     .insert([
       {
         url,
-        title,
-        notes: notes || null,
-        source: source || null,
-        category_id: categoryId || null
+        title: finalTitle,
+        notes: null, // No notes field in simplified UI
+        source,
+        image, // Hard-coded to null
+        category_id: finalCategoryId
       }
     ])
     .select()

@@ -91,71 +91,58 @@ export async function getLink(id: string) {
 // Add a new link
 export async function addLink(formData: FormData) {
   const url = formData.get('url') as string
-  const title = formData.get('title') as string
+  const title = formData.get('title') || 'Untitled'
   const categoryId = formData.get('category_id') as string
+  const description = formData.get('description') || ''
 
-  // Extract source from URL domain (or use 'Manual' as fallback)
+  // Simplify source field to avoid scraping issues
   let source = 'Manual'
   try {
-    const urlObj = new URL(url)
-    source = urlObj.hostname.replace('www.', '')
+    if (url) {
+      const urlObj = new URL(url)
+      source = urlObj.hostname.replace('www.', '')
+    }
   } catch (e) {
     source = 'Manual'
   }
 
-  // Use URL as title if title is blank
-  const finalTitle = title || url
+  // Ensure title has a fallback
+  const finalTitle = title || url || 'Untitled'
 
   // Hard-code image as null
   const image = null
 
-  // Default category to 'Junk' or first available category if none selected
+  // Default category to a hard-coded fallback ID if none selected
   let finalCategoryId = categoryId
   if (!finalCategoryId) {
-    // Try to find 'Junk' category first
-    const { data: categories, error: catError } = await supabase
-      .from('categories')
-      .select('id')
-      .or('name.eq.Junk,name.eq.junk')
-      .limit(1)
+    // Hard-code a fallback category ID that definitely exists in the Supabase 'categories' table
+    finalCategoryId = '1' // Replace with an actual category ID from your database
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('links')
+      .insert([
+        {
+          url,
+          title: finalTitle,
+          notes: description || null,
+          source,
+          image,
+          category_id: finalCategoryId
+        }
+      ])
+      .select()
       .single()
-    
-    if (!catError && categories) {
-      finalCategoryId = categories.id
-    } else {
-      // If 'Junk' category doesn't exist, get the first available category
-      const { data: firstCategory, error: firstCatError } = await supabase
-        .from('categories')
-        .select('id')
-        .limit(1)
-        .single()
-      
-      if (!firstCatError && firstCategory) {
-        finalCategoryId = firstCategory.id
-      }
+
+    if (error) {
+      return { error: error.message }
     }
+
+    return data
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Failed to add link' }
   }
-
-  const { data, error } = await supabase
-    .from('links')
-    .insert([
-      {
-        url,
-        title: finalTitle,
-        notes: null, // No notes field in simplified UI
-        source,
-        image, // Hard-coded to null
-        category_id: finalCategoryId
-      }
-    ])
-    .select()
-    .single()
-
-  if (error) {
-    throw new Error(error.message)
-  }
-
-  return data
 }
 
 // Update a link

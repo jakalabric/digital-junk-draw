@@ -26,9 +26,8 @@ function AddLinkForm() {
       const cats = await getCategories()
       setCategories(cats)
       
-      // Fail-safe method: Use URLSearchParams to grab the 'url' parameter
-      // Mobile Safari compatibility: Check URL parameters immediately and after a delay
-      const checkUrlParams = () => {
+      // Immediate URL parameter check - no delay needed
+      if (typeof window !== 'undefined') {
         const params = new URLSearchParams(window.location.search)
         const sharedUrl = params.get('url')
         
@@ -36,19 +35,11 @@ function AddLinkForm() {
           // Decode the URL parameter before setting the state
           const decodedUrl = decodeURIComponent(sharedUrl)
           setUrlState(decodedUrl)
-          return true
+          // Set URL as temporary title immediately if no title exists
+          if (!title) {
+            setTitle(decodedUrl)
+          }
         }
-        return false
-      }
-      
-      // Check immediately
-      const found = checkUrlParams()
-      
-      // If not found immediately, check again after a delay for Mobile Safari
-      if (!found) {
-        setTimeout(() => {
-          checkUrlParams()
-        }, 500)
       }
     }
     loadData()
@@ -70,7 +61,8 @@ function AddLinkForm() {
         setError('')
         try {
           const metadata = await fetchUrlMetadata(urlState)
-          if (metadata.title && !title) {
+          // Only update title if we're currently using URL as temporary title
+          if (metadata.title && title === urlState) {
             setTitle(metadata.title)
           }
           if (metadata.source && !source) {
@@ -83,9 +75,23 @@ function AddLinkForm() {
         }
       }
     }
-     
+    
     fetchMetadata()
   }, [urlState])
+  
+  // Auto-focus on category dropdown when categories are loaded
+  useEffect(() => {
+    if (categories.length > 0) {
+      const timeoutId = setTimeout(() => {
+        const categorySelect = document.getElementById('category-select')
+        if (categorySelect) {
+          categorySelect.focus()
+        }
+      }, 100) // Small delay to ensure DOM is ready
+      
+      return () => clearTimeout(timeoutId)
+    }
+  }, [categories])
 
   const handleUrlChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const newUrl = e.target.value
@@ -115,21 +121,24 @@ function AddLinkForm() {
     e.preventDefault()
     setError('')
     setLoading(true)
- 
+  
     try {
-      if (!urlState || !title) {
-        setError('URL and Title are required')
+      if (!urlState) {
+        setError('URL is required')
         setLoading(false)
         return
       }
- 
+  
+      // Use URL as title if no title is set (temporary title)
+      const finalTitle = title || urlState
+  
       const formData = new FormData()
       formData.append('url', urlState)
-      formData.append('title', title)
+      formData.append('title', finalTitle)
       formData.append('notes', notes)
       formData.append('source', source)
       formData.append('category_id', categoryId)
-
+ 
       await addLink(formData)
       setSuccess(true)
       
@@ -208,7 +217,6 @@ function AddLinkForm() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Link title"
-              required
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             />
           </div>
@@ -229,6 +237,7 @@ function AddLinkForm() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
             <select
+              id="category-select"
               value={categoryId}
               onChange={(e) => setCategoryId(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
@@ -265,7 +274,7 @@ function AddLinkForm() {
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !urlState}
             className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
           >
             {loading && <Loader2 size={18} className="animate-spin" />}

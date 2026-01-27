@@ -110,9 +110,6 @@ export async function addLink(formData: FormData) {
   // Ensure title has a fallback
   const finalTitle = title || url || 'Untitled'
 
-  // Hard-code image as null
-  const image = null
-
   // Default category to a hard-coded fallback ID if none selected
   let finalCategoryId = categoryId
   if (!finalCategoryId) {
@@ -121,7 +118,7 @@ export async function addLink(formData: FormData) {
   }
 
   try {
-    console.log('Saving link:', { url, title: finalTitle, notes: description || null, source, image, category_id: finalCategoryId })
+    console.log('Saving link:', { url, title: finalTitle, notes: description || null, source, category_id: finalCategoryId })
     const { data, error } = await supabase
       .from('links')
       .insert([
@@ -130,7 +127,6 @@ export async function addLink(formData: FormData) {
           title: finalTitle,
           notes: description || null,
           source,
-          image,
           category_id: finalCategoryId
         }
       ])
@@ -140,7 +136,8 @@ export async function addLink(formData: FormData) {
     console.log('Database response:', { data, error })
 
     if (error) {
-      return { error: error.message }
+      console.error('Supabase Error:', error)
+      throw new Error(JSON.stringify(error))
     }
 
     // Revalidate the home page to refresh the list

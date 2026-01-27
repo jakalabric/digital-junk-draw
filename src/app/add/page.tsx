@@ -63,7 +63,7 @@ function AddLinkForm() {
     e.preventDefault()
     setError('')
     setLoading(true)
-   
+    
     try {
       if (!url) {
         setError('URL is required')
@@ -76,12 +76,12 @@ function AddLinkForm() {
       formData.append('title', title)
       formData.append('category_id', categoryId)
  
-      await addLink(formData)
-      setSuccess(true)
-      
-      setTimeout(() => {
-        router.push('/')
-      }, 1500)
+      const result = await addLink(formData)
+      if (result.error) {
+        setError(result.error)
+      } else {
+        setSuccess(true)
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to add link')
     } finally {

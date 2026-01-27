@@ -26,13 +26,28 @@ function AddLinkForm() {
       setCategories(cats)
       
       // Fail-safe method: Use URLSearchParams to grab the 'url' parameter
-      const params = new URLSearchParams(window.location.search)
-      const sharedUrl = params.get('url')
+      // Mobile Safari compatibility: Check URL parameters immediately and after a delay
+      const checkUrlParams = () => {
+        const params = new URLSearchParams(window.location.search)
+        const sharedUrl = params.get('url')
+        
+        if (sharedUrl) {
+          // Decode the URL parameter before setting the state
+          const decodedUrl = decodeURIComponent(sharedUrl)
+          setUrl(decodedUrl)
+          return true
+        }
+        return false
+      }
       
-      if (sharedUrl) {
-        // Decode the URL parameter before setting the state
-        const decodedUrl = decodeURIComponent(sharedUrl)
-        setUrl(decodedUrl)
+      // Check immediately
+      const found = checkUrlParams()
+      
+      // If not found immediately, check again after a delay for Mobile Safari
+      if (!found) {
+        setTimeout(() => {
+          checkUrlParams()
+        }, 500)
       }
     }
     loadData()

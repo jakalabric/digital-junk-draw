@@ -8,8 +8,6 @@ import { Category } from '@/lib/supabase'
 
 function AddLinkForm() {
   const router = useRouter()
-  const searchParams = useSearchParams()
-  
   const [url, setUrl] = useState('')
   const [title, setTitle] = useState('')
   const [notes, setNotes] = useState('')
@@ -27,19 +25,20 @@ function AddLinkForm() {
       const cats = await getCategories()
       setCategories(cats)
       
-      // Check for pre-filled data from share target
-      const urlParam = searchParams.get('url')
-      const titleParam = searchParams.get('title')
-      const textParam = searchParams.get('text')
-      const sourceParam = searchParams.get('source')
+      // Check for pre-filled data from share target using URLSearchParams
+      const params = new URLSearchParams(window.location.search)
+      const sharedUrl = params.get('url')
+      const titleParam = params.get('title')
+      const textParam = params.get('text')
+      const sourceParam = params.get('source')
       
-      if (urlParam) setUrl(urlParam)
+      if (sharedUrl) setUrl(sharedUrl)
       if (titleParam) setTitle(titleParam)
       else if (textParam) setTitle(textParam)
       if (sourceParam) setSource(sourceParam)
     }
     loadData()
-  }, [searchParams])
+  }, [])
 
   // Auto-fetch metadata when URL is set from search params
   useEffect(() => {

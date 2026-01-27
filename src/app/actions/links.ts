@@ -1,6 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
 // Get all categories
@@ -141,7 +142,8 @@ export async function addLink(formData: FormData) {
     }
 
     // Revalidate the home page to refresh the list
-    revalidatePath('/')
+    revalidatePath('/', 'layout')
+    redirect('/')
 
     return data
   } catch (error) {

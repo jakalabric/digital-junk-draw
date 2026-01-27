@@ -31,10 +31,6 @@ function AddLinkForm() {
           // Decode the URL parameter before setting the state
           const decodedUrl = decodeURIComponent(sharedUrl)
           setUrl(decodedUrl)
-          // Set URL as temporary title immediately if no title exists
-          if (!title) {
-            setTitle(decodedUrl)
-          }
         }
       }
     }
@@ -100,14 +96,9 @@ function AddLinkForm() {
       </div>
     )
   }
-
+ 
   return (
     <div className="min-h-screen pb-20">
-      {/* Temporary URL Search Params Display */}
-      <div className="bg-gray-100 p-2 text-xs text-gray-700">
-        {typeof window !== 'undefined' ? window.location.search : 'Loading...'}
-      </div>
-      
       {/* Header */}
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200">
         <div className="px-4 py-3 flex items-center gap-3">
@@ -150,8 +141,9 @@ function AddLinkForm() {
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Link title"
+              placeholder="Enter title..."
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              autoFocus
             />
           </div>
 

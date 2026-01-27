@@ -118,9 +118,11 @@ export async function addLink(formData: FormData) {
     finalCategoryId = '1' // Replace with an actual category ID from your database
   }
  
+  // Database operation
+  let data, error
   try {
     console.log('Saving link:', { url, title: finalTitle, notes: description || null, source, category_id: finalCategoryId })
-    const { data, error } = await supabase
+    const result = await supabase
       .from('links')
       .insert([
         {
@@ -133,20 +135,22 @@ export async function addLink(formData: FormData) {
       ])
       .select()
       .single()
- 
-    console.log('Database response:', { data, error })
- 
-    if (error) {
-      console.error('Supabase Error:', error)
-      throw new Error(JSON.stringify(error))
-    }
- 
-    // Revalidate the home page to refresh the list
-    revalidatePath('/', 'layout')
-    redirect('/')
-  } catch (error) {
-    return { error: error instanceof Error ? error.message : 'Failed to add link' }
+
+    data = result.data
+    error = result.error
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : 'Failed to add link' }
   }
+
+  // Handle database errors
+  if (error) {
+    console.error('Supabase Error:', error)
+    return { error: JSON.stringify(error) }
+  }
+
+  // Revalidate the home page to refresh the list
+  revalidatePath('/', 'layout')
+  redirect('/')
 }
 
 // Update a link

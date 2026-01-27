@@ -25,20 +25,15 @@ function AddLinkForm() {
       const cats = await getCategories()
       setCategories(cats)
       
-      // Check for pre-filled data from share target using URLSearchParams
-      // Wrap in setTimeout for Mobile Safari compatibility
-      setTimeout(() => {
-        const params = new URLSearchParams(window.location.search)
-        const sharedUrl = params.get('url')
-        const titleParam = params.get('title')
-        const textParam = params.get('text')
-        const sourceParam = params.get('source')
-        
-        if (sharedUrl) setUrl(sharedUrl)
-        if (titleParam) setTitle(titleParam)
-        else if (textParam) setTitle(textParam)
-        if (sourceParam) setSource(sourceParam)
-      }, 0)
+      // Fail-safe method: Use URLSearchParams to grab the 'url' parameter
+      const params = new URLSearchParams(window.location.search)
+      const sharedUrl = params.get('url')
+      
+      if (sharedUrl) {
+        // Decode the URL parameter before setting the state
+        const decodedUrl = decodeURIComponent(sharedUrl)
+        setUrl(decodedUrl)
+      }
     }
     loadData()
   }, [])

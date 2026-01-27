@@ -1,5 +1,6 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
 import { supabase } from '@/lib/supabase'
 
 // Get all categories
@@ -120,6 +121,7 @@ export async function addLink(formData: FormData) {
   }
 
   try {
+    console.log('Saving link:', { url, title: finalTitle, notes: description || null, source, image, category_id: finalCategoryId })
     const { data, error } = await supabase
       .from('links')
       .insert([
@@ -135,9 +137,14 @@ export async function addLink(formData: FormData) {
       .select()
       .single()
 
+    console.log('Database response:', { data, error })
+
     if (error) {
       return { error: error.message }
     }
+
+    // Revalidate the home page to refresh the list
+    revalidatePath('/')
 
     return data
   } catch (error) {

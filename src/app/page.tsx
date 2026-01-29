@@ -57,21 +57,21 @@ export default function Home() {
     <>
       <div className="min-h-screen pb-20 bg-[var(--background)]">
         {/* Neutral Dark Header */}
-        <header className="sticky top-0 z-50 bg-[var(--surface-dark)] border-b border-[#1A202C] shadow-lg">
+        <header className="sticky top-0 z-50 bg-[var(--background)] border-b border-[#E2E8F0] shadow-sm">
           <div className="px-4 py-3">
             {/* Title with subtle accent */}
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <h1 className="text-lg font-bold text-[var(--on-surface)] tracking-tight">
+                <h1 className="text-lg font-bold text-[var(--foreground)] tracking-tight">
                   Digital Junk Drawer
                 </h1>
-                <span className="text-xs text-[var(--muted-text)] bg-[var(--primary-accent)]/20 px-2 py-0.5 rounded-full">
+                <span className="text-xs text-[var(--secondary-text)] bg-[var(--primary-accent)]/20 px-2 py-0.5 rounded-full">
                   v1.0
                 </span>
               </div>
               <Link
                 href="/add"
-                className="flex items-center gap-1 bg-[#2D3748] text-white px-4 py-2 rounded-[var(--border-radius)] hover:bg-[#1A202C] transition-colors text-sm font-medium shadow-sm"
+                className="flex items-center gap-1 bg-[var(--foreground)] text-white px-4 py-2 rounded-[var(--border-radius)] hover:opacity-90 transition-colors text-sm font-medium shadow-sm"
               >
                 <Plus size={16} />
                 <span className="hidden sm:inline">Add Link</span>
@@ -80,7 +80,7 @@ export default function Home() {
 
             {/* Search */}
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted-text)] text-sm">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--secondary-text)] text-sm">
                 <Search size={14} />
               </span>
               <input
@@ -88,14 +88,14 @@ export default function Home() {
                 placeholder="Search links..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-[var(--surface-dark)] border border-[#2D3748] rounded-[var(--border-radius)] focus:ring-2 focus:ring-[var(--primary-accent)] focus:border-[var(--primary-accent)] outline-none text-[var(--on-surface)] placeholder-[var(--muted-text)] text-sm shadow-sm"
+                className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#E2E8F0] rounded-[var(--border-radius)] focus:ring-2 focus:ring-[var(--primary-accent)] focus:border-[var(--primary-accent)] outline-none text-[var(--foreground)] placeholder-[var(--secondary-text)] text-sm shadow-sm"
               />
             </div>
           </div>
         </header>
 
         {/* Category Tabs - Warm Minimalist */}
-        <div className="sticky top-[72px] z-40 bg-[var(--surface-dark)] border-b border-[#1A202C] shadow-sm">
+        <div className="sticky top-[72px] z-40 bg-[var(--background)] border-b border-[#E2E8F0] shadow-sm">
           <div className="px-4 py-3 overflow-x-auto whitespace-nowrap scrollbar-hide">
             <div className="flex gap-2 items-center">
               {/* All Category */}
@@ -103,8 +103,8 @@ export default function Home() {
                 onClick={() => setSelectedCategory('all')}
                 className={`px-4 py-2 text-sm font-medium transition-all border rounded-[var(--border-radius)] ${
                   selectedCategory === 'all'
-                    ? 'bg-[#2D3748] text-white border-[#2D3748]'
-                    : 'bg-white text-[var(--foreground)] border-[#2D3748] hover:bg-[#2D3748]/10'
+                    ? 'bg-[var(--foreground)] text-white border-[var(--foreground)]'
+                    : 'bg-white text-[var(--foreground)] border-[#E2E8F0] hover:bg-[var(--foreground)]/5'
                 }`}
               >
                 All
@@ -140,7 +140,7 @@ export default function Home() {
         </div>
 
         {/* Main Content */}
-        <main className="px-4 pt-6 pb-24">
+        <main className="px-2 sm:px-4 pt-6 pb-24">
           {loading ? (
             <div className="flex items-center justify-center py-16">
               <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[var(--primary-accent)]"></div>
@@ -163,12 +163,12 @@ export default function Home() {
         </main>
 
         {/* Bottom Navigation Bar */}
-        <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[var(--surface-dark)] border-t border-[#1A202C] shadow-lg backdrop-blur-md">
+        <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[var(--light-charcoal)] border-t border-[#2D3748] shadow-lg backdrop-blur-md">
           <div className="flex justify-around items-center h-16 px-4">
             {/* List Tab */}
             <Link
               href="/"
-              className="flex flex-col items-center justify-center text-[var(--on-surface)] hover:text-[var(--primary-accent)] transition-colors"
+              className="flex flex-col items-center justify-center text-white/80 hover:text-[var(--primary-accent)] transition-colors"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -186,7 +186,7 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
               </div>
-              <span className="text-xs mt-1 font-medium text-[var(--on-surface)]">Add</span>
+              <span className="text-xs mt-1 font-medium text-white/80">Add</span>
             </Link>
 
             {/* Search Tab */}
@@ -197,7 +197,7 @@ export default function Home() {
                   searchInput.focus();
                 }
               }}
-              className="flex flex-col items-center justify-center text-[var(--on-surface)] hover:text-[var(--primary-accent)] transition-colors"
+              className="flex flex-col items-center justify-center text-white/80 hover:text-[var(--primary-accent)] transition-colors"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />

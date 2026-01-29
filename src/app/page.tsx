@@ -71,7 +71,7 @@ export default function Home() {
               </div>
               <Link
                 href="/add"
-                className="flex items-center gap-1 bg-[var(--foreground)] text-white px-4 py-2 rounded-[var(--border-radius)] hover:opacity-90 transition-colors text-sm font-medium shadow-sm"
+                className="flex items-center gap-1 bg-[var(--light-charcoal)] text-white px-4 py-2 rounded-[var(--border-radius)] hover:opacity-90 transition-colors text-sm font-medium shadow-sm"
               >
                 <Plus size={16} />
                 <span className="hidden sm:inline">Add Link</span>
@@ -103,7 +103,7 @@ export default function Home() {
                 onClick={() => setSelectedCategory('all')}
                 className={`px-4 py-2 text-sm font-medium transition-all border rounded-[var(--border-radius)] ${
                   selectedCategory === 'all'
-                    ? 'bg-[var(--foreground)] text-white border-[var(--foreground)]'
+                    ? 'bg-white text-[var(--light-charcoal)] border-[var(--light-charcoal)]'
                     : 'bg-white text-[var(--foreground)] border-[#E2E8F0] hover:bg-[var(--foreground)]/5'
                 }`}
               >

@@ -1,12 +1,25 @@
 @import "tailwindcss";
 
-/* Matrix Theme - Pure black background with Matrix Green text */
+/* Warm Minimalist Metric Theme */
 :root {
-  --background: #000000;
-  --foreground: #00FF41;
-  --matrix-green: #00FF41;
-  --matrix-green-dim: #00CC33;
-  --matrix-green-dark: #008822;
+  --background: #FDFBF5;
+  --foreground: #1A202C;
+  --card-bg: #FFFFFF;
+  --primary-accent: #40E0D0;
+  --primary-accent-60: rgba(64, 224, 208, 0.6);
+  --secondary-text: #718096;
+  --border-radius: 0.75rem;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  --bg-cream: #FFFCF8;
+  --category-turquoise: #40E0D0;
+  --category-dark-blue: #1E40AF;
+  --category-light-red: #F87171;
+  --category-amethyst: #8B5CF6;
+  --category-soft-rose: #FB7185;
+  --category-muted-gold: #D97706;
+  --surface-dark: #0B1215;
+  --on-surface: #FDFBF5;
+  --muted-text: #9498A1;
 }
 
 @theme inline {
@@ -19,7 +32,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-mono), monospace;
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

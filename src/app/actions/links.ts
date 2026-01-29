@@ -41,7 +41,63 @@ export async function createCategory(formData: FormData) {
     throw new Error(error.message)
   }
 
+  revalidatePath('/')
   return data
+}
+
+// Update a category
+export async function updateCategory(formData: FormData) {
+  const id = formData.get('id') as string
+  const name = formData.get('name') as string
+  const color = formData.get('color') as string
+
+  if (!id || !name || !color) {
+    throw new Error('ID, name and color are required')
+  }
+
+  const { data, error } = await supabase
+    .from('categories')
+    .update({ name, color })
+    .eq('id', id)
+    .select()
+    .single()
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  revalidatePath('/')
+  return data
+}
+
+// Delete a category and move its links to uncategorized (null)
+export async function deleteCategory(id: string) {
+  if (!id) {
+    throw new Error('Category ID is required')
+  }
+
+  // First, update all links with this category_id to null
+  const { error: updateError } = await supabase
+    .from('links')
+    .update({ category_id: null })
+    .eq('category_id', id)
+
+  if (updateError) {
+    throw new Error(`Failed to update links: ${updateError.message}`)
+  }
+
+  // Then delete the category
+  const { error } = await supabase
+    .from('categories')
+    .delete()
+    .eq('id', id)
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  revalidatePath('/')
+  return { success: true }
 }
 
 // Get all links with optional filters

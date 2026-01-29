@@ -119,24 +119,24 @@ export default function LinkDetailPage() {
   }
 
   return (
-    <div className="min-h-screen pb-20">
+    <div className="min-h-screen pb-20 bg-[var(--background)]">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200">
+      <header className="sticky top-0 z-50 bg-[var(--surface-dark)] border-b border-[#1A202C] shadow-lg">
         <div className="px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               onClick={() => router.back()}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-2 hover:bg-[var(--primary-accent)]/20 rounded-lg transition-colors"
             >
-              <ArrowLeft size={20} />
+              <ArrowLeft size={20} className="text-[var(--on-surface)]" />
             </button>
-            <h1 className="text-lg font-semibold text-gray-900">Edit Link</h1>
+            <h1 className="text-lg font-semibold text-[var(--on-surface)]">Edit Link</h1>
           </div>
           <a
             href={link.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-blue-600"
+            className="p-2 hover:bg-[var(--primary-accent)]/20 rounded-lg transition-colors text-[var(--primary-accent)]"
           >
             <ExternalLink size={20} />
           </a>

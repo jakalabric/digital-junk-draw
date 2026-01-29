@@ -84,74 +84,76 @@ function AddLinkForm() {
   }
  
   return (
-    <div className="min-h-screen pb-20">
-      {/* Terminal Header */}
-      <header className="sticky top-0 z-40 bg-black/95 backdrop-blur-sm border-b border-green-500/20">
-        <div className="px-4 py-3 flex items-center gap-3">
+    <div className="min-h-screen pb-20 bg-[var(--background)]">
+      {/* Neutral Dark Header */}
+      <header className="sticky top-0 z-50 bg-[var(--surface-dark)] border-b border-[#1A202C] shadow-lg">
+        <div className="px-4 py-4 flex items-center gap-3">
           <button
             onClick={() => router.back()}
-            className="p-2 hover:bg-green-500/10 rounded transition-colors"
+            className="p-2 hover:bg-[var(--primary-accent)]/20 rounded-full transition-colors"
           >
-            <ArrowLeft size={20} className="text-green-500" />
+            <ArrowLeft size={20} className="text-[var(--on-surface)]" />
           </button>
-          <h1 className="text-lg font-semibold text-green-500">ADD NEW LINK</h1>
+          <h1 className="text-lg font-semibold text-[var(--on-surface)]">Add New Link</h1>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="px-4 py-6">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* URL Input - Command Prompt Style */}
+      <main className="px-4 py-8">
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {/* URL Input */}
           <div>
-            <label className="block text-xs font-medium text-green-400 mb-1">
-              INPUT_URL <span className="text-green-500">*</span>
+            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              URL <span className="text-red-500">*</span>
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-green-500 text-sm">$</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--secondary-text)]">
+                <LinkIcon size={16} />
+              </span>
               <input
                 type="text"
                 value={url}
                 onChange={handleUrlChange}
                 placeholder="https://example.com"
-                className="w-full pl-8 pr-4 py-3 bg-black/30 border-b border-green-500/20 focus:border-green-500 outline-none text-green-500 placeholder-green-500/50 transition-colors"
+                className="w-full pl-10 pr-4 py-3 bg-white border border-[var(--primary-accent-60)] rounded-[var(--border-radius)] focus:ring-2 focus:ring-[var(--primary-accent)] focus:border-[var(--primary-accent)] outline-none text-[var(--foreground)] placeholder-[var(--secondary-text)] transition-colors"
               />
             </div>
           </div>
 
-          {/* Title Input - Command Prompt Style */}
+          {/* Title Input */}
           <div>
-            <label className="block text-xs font-medium text-green-400 mb-1">
-              INPUT_TITLE <span className="text-green-500">*</span>
+            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              Title <span className="text-red-500">*</span>
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-green-500 text-sm">$</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--secondary-text)] text-sm">#</span>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Enter title..."
-                className="w-full pl-8 pr-4 py-3 bg-black/30 border-b border-green-500/20 focus:border-green-500 outline-none text-green-500 placeholder-green-500/50 transition-colors"
+                placeholder="Enter a descriptive title..."
+                className="w-full pl-10 pr-4 py-3 bg-white border border-[var(--primary-accent-60)] rounded-[var(--border-radius)] focus:ring-2 focus:ring-[var(--primary-accent)] focus:border-[var(--primary-accent)] outline-none text-[var(--foreground)] placeholder-[var(--secondary-text)] transition-colors"
                 autoFocus
               />
             </div>
           </div>
 
-          {/* Category Select - Terminal Style */}
+          {/* Category Select */}
           <div>
-            <label className="block text-xs font-medium text-green-400 mb-1">
-              SELECT_CATEGORY
+            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              Category
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-green-500 text-sm">$</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--secondary-text)] text-sm">⌄</span>
               <select
                 id="category-select"
                 value={categoryId}
                 onChange={(e) => setCategoryId(e.target.value)}
-                className="w-full pl-8 pr-4 py-3 bg-black/30 border-b border-green-500/20 focus:border-green-500 outline-none text-green-500 appearance-none"
+                className="w-full pl-10 pr-4 py-3 bg-white border border-[var(--primary-accent-60)] rounded-[var(--border-radius)] focus:ring-2 focus:ring-[var(--primary-accent)] focus:border-[var(--primary-accent)] outline-none text-[var(--foreground)] appearance-none"
               >
-                <option value="" className="bg-black text-green-500">SELECT_CATEGORY</option>
+                <option value="" className="text-[var(--secondary-text)]">Select a category</option>
                 {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id} className="bg-black text-green-500">
+                  <option key={cat.id} value={cat.id} className="text-[var(--foreground)]">
                     {cat.name}
                   </option>
               ))}
@@ -159,22 +161,22 @@ function AddLinkForm() {
             </div>
           </div>
 
-          {/* Error Message - Terminal Style */}
+          {/* Error Message */}
           {error && (
-            <div className="flex items-center gap-2 text-red-400 bg-red-900/20 px-4 py-3 rounded border border-red-500/20">
-              <AlertCircle size={16} className="text-red-400" />
-              <span className="text-xs text-red-400">{error}</span>
+            <div className="flex items-center gap-2 text-red-600 bg-red-50 px-4 py-3 rounded-lg border border-red-200">
+              <AlertCircle size={16} className="text-red-600" />
+              <span className="text-sm text-red-600">{error}</span>
             </div>
           )}
 
-          {/* Submit Button - Terminal Style */}
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading || !url}
-            className="w-full bg-green-500/10 text-green-500 py-4 rounded border border-green-500/20 hover:bg-green-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 font-medium"
+            className="w-full bg-[var(--primary-accent)] text-white py-4 rounded-[var(--border-radius)] hover:bg-[var(--primary-accent)]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 font-medium shadow-sm"
           >
-            {loading && <Loader2 size={18} className="animate-spin text-green-500" />}
-            {loading ? 'EXECUTING...' : 'EXECUTE'}
+            {loading && <Loader2 size={18} className="animate-spin text-white" />}
+            {loading ? 'Adding...' : 'Add Link'}
           </button>
         </form>
       </main>

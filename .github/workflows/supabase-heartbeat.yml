@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Send Heartbeat Request
-        run: |
-          curl -X GET "https://mxndnjosakuozorkkthc.supabase.co/rest/v1/links?select=id&limit=1" \
-               -H "apikey: ${SUPABASE_ANON_KEY}" \
-               -H "Authorization: Bearer ${SUPABASE_ANON_KEY}"
+              run: |
+                curl -X GET "https://mxndnjosakuozorkkthc.supabase.co/rest/v1/links?select=id&limit=1" \
+                     -H "apikey: ${SUPABASE_ANON_KEY}" \
+                     -H "Authorization: Bearer ${SUPABASE_ANON_KEY}"

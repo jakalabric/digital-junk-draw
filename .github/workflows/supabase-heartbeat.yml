@@ -1,20 +1,15 @@
-name: Supabase Heartbeat
+name: ping-supabase
 
 on:
   schedule:
-    # Runs twice a week: every Monday and Thursday at midnight UTC
-    - cron: '0 0 * * 1,4'
-  workflow_dispatch: # Allows you to run it manually from GitHub to test
+    - cron: '0 0 */3 * *' # Runs every 3 days
 
 jobs:
   ping-supabase:
     runs-on: ubuntu-latest
     steps:
       - name: Send Heartbeat Request
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
-          curl -X GET "${SUPABASE_URL}/rest/v1/" \
-            -H "apikey: ${SUPABASE_ANON_KEY}" \
-            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}"
+          curl -X GET "https://mxndnjosakuozorkkthc.supabase.co/rest/v1/links?select=id&limit=1" \
+               -H "apikey: ${SUPABASE_ANON_KEY}" \
+               -H "Authorization: Bearer ${SUPABASE_ANON_KEY}"
